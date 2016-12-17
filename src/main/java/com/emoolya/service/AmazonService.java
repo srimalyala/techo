@@ -80,13 +80,12 @@ public class AmazonService {
         } catch (final Exception e) {
             log.error("error occurred ", e);
         }
-
     }
 
     /**
      * Requests Amazon for the Product information by using Product bar code.
      *
-     * @param id - universal Product code
+     * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
     public final Product getProductInfo(final @Header("id") String id) {
 
@@ -142,29 +141,24 @@ public class AmazonService {
 
 
     /**
-     *
+     * Builds {@code product} i.e used by FE's
      * @param amazonItem
      * @return
      */
-    private Product buildItem(final com.emoolya.model.amazon.Item amazonItem) {
+    private Product buildItem(final Item amazonItem) {
 
         final Product product = new Product();
         final ItemAttributes itemAttributes = amazonItem.getItemAttributes();
 
         product.setSource("amazon");
         product.setFormattedPrice(itemAttributes.getListPrice().getFormattedPrice());
-        product.setTitle(itemAttributes.getTitle());
+
+        final String title = itemAttributes.getTitle().split("0")[0];
+        product.setTitle(title);
         product.setPageUrl(amazonItem.getDetailPageURL());
         product.setImageUrl(amazonItem.getSmallImage().getURL());
 
         return product;
-    }
-
-    /**
-     * test bean
-     */
-    public void test() {
-        log.info("amazon service");
     }
 
     /**
@@ -200,11 +194,11 @@ public class AmazonService {
         if (sortedParamMap.isEmpty()) {
             return "";
         }
-        StringBuffer buffer = new StringBuffer();
-        Iterator<Map.Entry<String, String>> iter =
+        final StringBuffer buffer = new StringBuffer();
+        final Iterator<Map.Entry<String, String>> iter =
                 sortedParamMap.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, String> kvpair = iter.next();
+            final Map.Entry<String, String> kvpair = iter.next();
             buffer.append(percentEncodeRfc3986(kvpair.getKey()));
             buffer.append("=");
             buffer.append(percentEncodeRfc3986(kvpair.getValue()));
@@ -212,8 +206,7 @@ public class AmazonService {
                 buffer.append("&");
             }
         }
-        String canonical = buffer.toString();
-        return canonical;
+        return buffer.toString();
     }
 
     /**
@@ -236,10 +229,7 @@ public class AmazonService {
      * returns timestamo in GMT format
      */
     private String timestamp() {
-
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         return LocalDateTime.now().format(formatter);
-
     }
-
 }
