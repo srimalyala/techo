@@ -104,7 +104,7 @@ public class AmazonService {
         queryValueMap.set("ItemId", id);
         queryValueMap.set("Operation", "ItemLookup");
         queryValueMap.set("ResponseGroup", "ItemAttributes,OfferSummary,Images");
-        queryValueMap.set("SearchIndex", "Books");
+        queryValueMap.set("SearchIndex", "All");
         queryValueMap.set("Service", "AWSECommerceService");
         queryValueMap.set("Timestamp", timestamp());
 
