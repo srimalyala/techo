@@ -151,6 +151,7 @@ public class AmazonService {
         final Product product = new Product();
         final ItemAttributes itemAttributes = amazonItem.getItemAttributes();
 
+        product.setSource("amazon");
         product.setFormattedPrice(itemAttributes.getListPrice().getFormattedPrice());
         product.setTitle(itemAttributes.getTitle());
         product.setPageUrl(amazonItem.getDetailPageURL());
