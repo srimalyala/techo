@@ -1,10 +1,13 @@
 package com.emoolya.service;
 
+import com.google.gson.Gson;
+
 import com.emoolya.config.AmazonConfig;
 import com.emoolya.model.Product;
 import com.emoolya.model.amazon.Item;
 import com.emoolya.model.amazon.ItemAttributes;
 import com.emoolya.model.amazon.ItemLookupResponse;
+import com.emoolya.model.amazon.Items;
 
 import org.apache.camel.Header;
 import org.apache.commons.codec.binary.Base64;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -27,6 +31,7 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -53,6 +58,8 @@ public class AmazonService {
 
     private JAXBContext jaxbContext;
     private Unmarshaller unmarshaller;
+
+    private final Gson gson = new Gson();
 
 
     Mac sha256_HMAC = null;
@@ -87,7 +94,7 @@ public class AmazonService {
      *
      * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
-    public final Product getProductInfo(final @Header("id") String id) {
+    public final String getProductInfo(final @Header("id") String id) {
 
         log.info("Sending request to amazon to get Product info of having barcode {}", id);
 
@@ -126,11 +133,19 @@ public class AmazonService {
             final StringReader responseXML = new StringReader(response.getBody());
             final ItemLookupResponse itemLookupResponse = (ItemLookupResponse)
                     unmarshaller.unmarshal(responseXML);
-            final Item item = itemLookupResponse.getItems().get(0).getItem().get(0);
+
+            final List<Items> items = itemLookupResponse.getItems();
+
+            if(CollectionUtils.isEmpty(items) ||
+                    CollectionUtils.isEmpty(items.get(0).getItem())) {
+                return "";
+            }
+
+            final Item item = items.get(0).getItem().get(0);
 
             final Product product = buildItem(item);
 
-            return product;
+            return gson.toJson(product);
 
 
         } catch (final Exception exception) {

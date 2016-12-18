@@ -10,6 +10,8 @@ import com.emoolya.model.Product;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
 import java.lang.reflect.Type;
@@ -19,35 +21,36 @@ import java.util.List;
 /**
  * Created by srikanth on 2016/12/17.
  */
-class ProductAggregationStrategy implements AggregationStrategy {
 
-    Gson gson = new Gson();
+@Component("aggregationStrategy")
+public class ProductAggregationStrategy implements AggregationStrategy {
+
+    final Gson gson = new Gson();
+
     @Override
-    public org.apache.camel.Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-         if(oldExchange == null)  {
-             return newExchange;
-         }
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 
-         if(newExchange == null) {
-             return oldExchange;
-         }
+        if (oldExchange == null) {
+            return newExchange;
+        }
 
-        final Object newExchangebody =
-                newExchange.getIn().getBody();
+        final String oldExchangeBody = (String) oldExchange.getIn().getBody();
 
-        if(newExchangebody == null) {
+        if (StringUtils.isEmpty(oldExchangeBody)) {
+            return newExchange;
+        }
+
+        if (newExchange == null) {
             return oldExchange;
         }
 
-        final String oldExhangeData = gson.toJson(oldExchange.getIn().getBody());
-        final String newExhangeData = gson.toJson(newExchangebody);
+        final String newExchangeBody = (String) newExchange.getIn().getBody();
 
-        final String mergeExchangeData = "[" + oldExhangeData +"," + newExhangeData + "]";
+        if (StringUtils.isEmpty(newExchangeBody)) {
+            return oldExchange;
+        }
 
-        final Type listType = new TypeToken<ArrayList<Product>>(){}.getType();
-
-        List<Product> products = new Gson().fromJson(mergeExchangeData, listType);
-        oldExchange.getIn().setBody(products);
+        oldExchange.getIn().setBody(oldExchangeBody + "," + newExchangeBody);
 
         return oldExchange;
     }

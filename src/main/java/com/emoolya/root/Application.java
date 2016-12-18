@@ -10,7 +10,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Controller;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.emoolya.routes", "com.emoolya.service" },
+@ComponentScan(basePackages = { "com.emoolya.routes", "com.emoolya.service", "com.emoolya.bean" },
         excludeFilters = {@ComponentScan.Filter(value = Controller.class, type = FilterType.ANNOTATION)})
 
 public class Application  {
@@ -21,7 +21,7 @@ public class Application  {
 
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
-        ServletRegistrationBean registration = new ServletRegistrationBean(new CamelHttpTransportServlet(), "/service/*");
+        final ServletRegistrationBean registration = new ServletRegistrationBean(new CamelHttpTransportServlet(), "/service/*");
         registration.setName("CamelServlet");
         return registration;
     }

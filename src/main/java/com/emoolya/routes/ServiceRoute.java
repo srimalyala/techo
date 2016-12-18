@@ -1,5 +1,6 @@
 package com.emoolya.routes;
 
+import com.emoolya.bean.ProductTransformerBean;
 import com.emoolya.service.AmazonService;
 import com.emoolya.service.FlipkartService;
 
@@ -22,7 +23,11 @@ public class ServiceRoute extends RouteBuilder {
     @Autowired
     private FlipkartService flipkartService;
 
-    final AggregationStrategy myAggregationStrategy = new ProductAggregationStrategy();
+    @Autowired
+    private ProductTransformerBean transformerBean;
+
+    @Autowired
+    private AggregationStrategy aggregationStrategy;
 
     @Override
     public void configure() throws Exception {
@@ -30,12 +35,13 @@ public class ServiceRoute extends RouteBuilder {
         restConfiguration().component("servlet").bindingMode(RestBindingMode.json)
         .dataFormatProperty("prettyPrint", "true");
 
-        rest("/").get("barcode/{id}").to("direct:processService").produces("application/json");
+        rest("/").get("barcode/{id}").to("direct:processRequest").
+                produces("application/json");
 
-        from("direct:processService").multicast().parallelProcessing().
+        from("direct:processRequest").multicast(aggregationStrategy).parallelProcessing().
                 to("bean:amazonService?method=getProductInfo",
-                        "bean:flipkartService?method=getProductInfo").
-                aggregationStrategy(myAggregationStrategy);
+                        "bean:flipkartService?method=getProductInfo").end().
+                to("bean:transformerBean");
 
     }
 }

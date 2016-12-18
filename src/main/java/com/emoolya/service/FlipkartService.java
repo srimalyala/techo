@@ -1,5 +1,6 @@
 package com.emoolya.service;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,6 +39,8 @@ public class FlipkartService {
 
     private RestTemplate restTemplate;
 
+    private Gson gson = new Gson();
+
     @PostConstruct
     public void init() {
 
@@ -54,7 +57,7 @@ public class FlipkartService {
      *
      * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
-    public Product getProductInfo(final @Header("id") String id) {
+    public String getProductInfo(final @Header("id") String id) {
 
         final String url = config.getUrl();
         final UriComponentsBuilder uri = UriComponentsBuilder.
@@ -69,13 +72,13 @@ public class FlipkartService {
                 HttpMethod.GET, entity, String.class);
 
         if(exchange.getStatusCode() != HttpStatus.OK) {
-            return null;
+            return "";
         }
 
         log.info(exchange.getBody());
 
         final Product product = buildProduct(exchange.getBody());
-        return product;
+        return gson.toJson(product);
 
     }
 
