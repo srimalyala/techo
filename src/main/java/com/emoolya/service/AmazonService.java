@@ -52,8 +52,6 @@ public class AmazonService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private final AmazonConfig config = new AmazonConfig();
-
     private final Base64 base64Encoder = new Base64();
 
     private JAXBContext jaxbContext;
@@ -76,6 +74,7 @@ public class AmazonService {
             }
         });
         try {
+            AmazonConfig config = new AmazonConfig();
             final String awsSecretKey = config.getSecretKey();
             secret_key = new SecretKeySpec(awsSecretKey.getBytes("UTF-8"), "HmacSHA256");
 
@@ -94,7 +93,10 @@ public class AmazonService {
      *
      * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
-    public final String getProductInfo(final @Header("id") String id) {
+    public final String getProductInfo(final @Header("countryCode") String countryCode,
+                                       final @Header("id") String id) {
+
+        final AmazonConfig config = new AmazonConfig(countryCode);
 
         log.info("Sending request to amazon to get Product info of having barcode {}", id);
 
@@ -117,11 +119,12 @@ public class AmazonService {
 
         final SortedMap<String, String> sortedMap = new TreeMap<>(queryValueMap.toSingleValueMap());
         final String canonicalize = canonicalize(sortedMap);
-        final String signature = getSignature(canonicalize);
+        final String signature = getSignature(config.getDomain(),
+                config.getUri(), canonicalize);
 
         try {
 
-            final String url = config.getServiceUrl() + "?" + canonicalize
+            final String url = "http://" + config.getDomain() + config.getUri() + "?" + canonicalize
                     + "&Signature=" + signature;
             final URI uri = URI.create(url);
             final ResponseEntity<String> response = restTemplate.getForEntity(
@@ -184,11 +187,12 @@ public class AmazonService {
      * Example REST
      */
 
-    private final String getSignature(final String canonicalize) {
+    private final String getSignature(final String domain, final String uri,
+                                      final String canonicalize) {
 
         final String newline = System.getProperty("line.separator");
         String signature = HttpMethod.GET + newline +
-                "webservices.amazon.in" + newline + "/onca/xml" + newline +
+                domain + newline + uri + newline +
                 canonicalize;
         try {
 

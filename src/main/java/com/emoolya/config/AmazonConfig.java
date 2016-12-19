@@ -1,24 +1,35 @@
 package com.emoolya.config;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by srikanth on 2016/12/10.
  */
 public class AmazonConfig {
 
-    private String serviceUrl = "http://webservices.amazon.in/onca/xml";
+    private String domain;
+
+    private String AssociateTag;
+
+    private String uri = "/onca/xml";
 
     private String awsAccessKeyId = "AKIAJ7NHWB4XOVV6LFEA";
 
     private String secretKey = "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";
 
-    private String AssociateTag = "emoolya04-21";
-
-    public String getServiceUrl() {
-        return serviceUrl;
+    public AmazonConfig(String countryCode) {
+        if (StringUtils.equalsIgnoreCase(countryCode, "IN")) {
+            this.domain = "webservices.amazon.in";
+            AssociateTag = "emoolya04-21";
+        } else {
+            this.domain = "webservices.amazon.com";
+            AssociateTag = "emulya-20";
+        }
     }
 
-    public void setServiceUrl(String serviceUrl) {
-        this.serviceUrl = serviceUrl;
+    public AmazonConfig() {
+        this.domain = "amazon.webservices.com";
+        AssociateTag = "emulya-20";
     }
 
     public String getAwsAccessKeyId() {
@@ -45,4 +56,19 @@ public class AmazonConfig {
         AssociateTag = associateTag;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 }

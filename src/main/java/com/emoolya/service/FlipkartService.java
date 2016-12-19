@@ -100,8 +100,8 @@ public class FlipkartService {
 
         final JsonObject imageUrlObject = jobject.get("imageUrls").getAsJsonObject();
 
-        if(imageUrlObject.get("200*200") != null) {
-            final String imageUrl = imageUrlObject.get("200*200").getAsString();
+        if(imageUrlObject.get("200x200") != null) {
+            final String imageUrl = imageUrlObject.get("200x200").getAsString();
             product.setImageUrl(imageUrl);
         }
 

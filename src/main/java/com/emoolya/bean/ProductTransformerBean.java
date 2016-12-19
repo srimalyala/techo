@@ -7,8 +7,6 @@ import com.emoolya.model.Product;
 import com.emoolya.model.Response;
 
 import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +25,11 @@ public class ProductTransformerBean {
     public Response transform(final @Body String json) {
 
         final String body = "[" + json+ "]";
-        Type collectionType = new TypeToken<Collection<Product>>() {
+        final Type collectionType = new TypeToken<Collection<Product>>() {
         }.getType();
         final List<Product> products = gson.fromJson(body, collectionType);
 
-        Response response = new Response();
+        final Response response = new Response();
         response.setCode(HttpStatus.OK.value());
         response.setNoOfResults(products.size());
         response.setProducts(products);
