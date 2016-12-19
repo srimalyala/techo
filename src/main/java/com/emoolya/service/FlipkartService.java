@@ -63,6 +63,7 @@ public class FlipkartService {
         final UriComponentsBuilder uri = UriComponentsBuilder.
                 fromHttpUrl(url).queryParam("id", id);
 
+        log.info("send request to flipkart - ", uri.toUriString());
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Fk-Affiliate-Id", config.getAffiliateId());
         headers.set("Fk-Affiliate-Token", config.getToken());
@@ -82,6 +83,11 @@ public class FlipkartService {
 
     }
 
+    /**
+     * builds emoolya product info
+     * @param jsonLine
+     * @return
+     */
     private Product buildProduct(final String jsonLine) {
 
         if (StringUtils.isEmpty(jsonLine)) {

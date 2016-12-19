@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
  * Created by srikanth on 2016/12/17.
  */
-
 @Component("aggregationStrategy")
 public class ProductAggregationStrategy implements AggregationStrategy {
 

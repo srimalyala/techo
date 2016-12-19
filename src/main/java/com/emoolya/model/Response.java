@@ -3,6 +3,7 @@ package com.emoolya.model;
 import java.util.List;
 
 /**
+ * THis is the final response object returned to the calling front end and mobile app services.
  * Created by srikanth on 2016/12/18.
  */
 public class Response {
