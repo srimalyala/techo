@@ -1,6 +1,7 @@
 package com.emoolya.routes;
 
 import com.emoolya.bean.ProductTransformerBean;
+import com.emoolya.bean.RecipientListBean;
 import com.emoolya.service.AmazonService;
 import com.emoolya.service.FlipkartService;
 
@@ -35,13 +36,13 @@ public class ServiceRoute extends RouteBuilder {
         restConfiguration().component("servlet").bindingMode(RestBindingMode.json)
         .dataFormatProperty("prettyPrint", "true");
 
-        rest("/").get("barcode/{id}").to("direct:processRequest").
+        rest("/").get("barcode/{id}/countrycode/{countryCode}").to("direct:processRequest").
                 produces("application/json");
 
-        from("direct:processRequest").multicast(aggregationStrategy).parallelProcessing().
-                to("bean:amazonService?method=getProductInfo",
-                        "bean:flipkartService?method=getProductInfo").end().
-                to("bean:transformerBean");
+        from("direct:processRequest").process(new RecipientListBean()).recipientList(header("recipients"))
+                .aggregationStrategy(aggregationStrategy)
+                .parallelProcessing()
+                .to("bean:transformerBean");
 
     }
 }
