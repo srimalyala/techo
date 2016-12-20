@@ -76,7 +76,7 @@ public class FlipkartService {
             return "";
         }
 
-        log.info(exchange.getBody());
+        log.info("Response from flipkart service..", exchange.getBody());
 
         final Product product = buildProduct(exchange.getBody());
         return gson.toJson(product);

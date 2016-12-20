@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Receives {@code Product} as a json string and converts to array of products.
  * Created by srikanth on 2016/12/18.
  */
 @Component("transformerBean")

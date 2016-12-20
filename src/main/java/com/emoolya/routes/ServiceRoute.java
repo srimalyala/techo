@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 
 /**
+ * This route filters recipients by country code and  does parallel processing and aggrgates data.
+ *
  * Created by srikanth on 2016/09/27.
  */
 @Component

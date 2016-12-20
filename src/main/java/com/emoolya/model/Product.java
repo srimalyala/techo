@@ -1,6 +1,8 @@
 package com.emoolya.model;
 
 /**
+ * Thsi is the final product information formed by parsing/binding external servic e responses.
+ *
  * Created by srikanth on 2016/12/16.
  */
 public class Product {
