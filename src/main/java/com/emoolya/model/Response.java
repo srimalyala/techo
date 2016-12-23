@@ -8,11 +8,11 @@ import java.util.List;
  */
 public class Response {
 
-    private int code;
+    private int code = 200;
 
-    private int noOfResults;
+    private String result = "Ok";
 
-    private List<Product> products;
+    private Object data;
 
     public int getCode() {
         return code;
@@ -22,19 +22,19 @@ public class Response {
         this.code = code;
     }
 
-    public int getNoOfResults() {
-        return noOfResults;
+    public String getResult() {
+        return result;
     }
 
-    public void setNoOfResults(int noOfResults) {
-        this.noOfResults = noOfResults;
+    public void setResult(String result) {
+        this.result = result;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public Object getData() {
+        return data;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setData(Object data) {
+        this.data = data;
     }
 }

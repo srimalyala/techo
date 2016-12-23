@@ -8,6 +8,8 @@ import com.emoolya.model.amazon.Item;
 import com.emoolya.model.amazon.ItemAttributes;
 import com.emoolya.model.amazon.ItemLookupResponse;
 import com.emoolya.model.amazon.Items;
+import com.emoolya.model.amazon.OfferSummary;
+import com.emoolya.model.amazon.Price;
 
 import org.apache.camel.Header;
 import org.apache.commons.codec.binary.Base64;
@@ -55,10 +57,10 @@ public class AmazonService {
     private final Base64 base64Encoder = new Base64();
 
     private JAXBContext jaxbContext;
+
     private Unmarshaller unmarshaller;
 
     private final Gson gson = new Gson();
-
 
     Mac sha256_HMAC = null;
 
@@ -131,7 +133,11 @@ public class AmazonService {
                     uri,
                     String.class);
 
-            log.info(response.getBody());
+            log.info("successfully got response from amazon service");
+
+            if (log.isDebugEnabled()) {
+                log.debug(response.getBody());
+            }
 
             final StringReader responseXML = new StringReader(response.getBody());
             final ItemLookupResponse itemLookupResponse = (ItemLookupResponse)
@@ -146,7 +152,7 @@ public class AmazonService {
 
             final Item item = items.get(0).getItem().get(0);
 
-            final Product product = buildItem(item);
+            final Product product = buildProduct(item);
 
             return gson.toJson(product);
 
@@ -163,13 +169,31 @@ public class AmazonService {
      * @param amazonItem
      * @return
      */
-    private Product buildItem(final Item amazonItem) {
+    private Product buildProduct(final Item amazonItem) {
 
         final Product product = new Product();
         final ItemAttributes itemAttributes = amazonItem.getItemAttributes();
 
         product.setSource("amazon");
-        product.setFormattedPrice(itemAttributes.getListPrice().getFormattedPrice());
+
+        String formattedPrice = "";
+        boolean isPriceSet = false;
+        final OfferSummary offerSummary = amazonItem.getOfferSummary();
+
+        if(offerSummary != null) {
+            final Price lowestNewPrice = offerSummary.getLowestNewPrice();
+
+            if(lowestNewPrice != null) {
+                formattedPrice = lowestNewPrice.getFormattedPrice();
+                isPriceSet = true;
+            }
+        }
+
+        if(isPriceSet == false) {
+            formattedPrice = itemAttributes.getListPrice().getFormattedPrice();
+        }
+
+        product.setFormattedPrice(formattedPrice);
 
         final String title = itemAttributes.getTitle().split("0")[0];
         product.setTitle(title);
