@@ -93,26 +93,26 @@ public class AmazonService {
     /**
      * Requests Amazon for the Product information by using Product bar code.
      *
-     * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
+     * @param code - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
     public final String getProductInfo(final @Header("countryCode") String countryCode,
-                                       final @Header("id") String id) {
+                                       final @Header("code") String code) {
 
         final AmazonConfig config = new AmazonConfig(countryCode);
 
-        log.info("Sending request to amazon to get Product info of having barcode {}", id);
+        log.info("Sending request to amazon to get Product info of having barcode {}", code);
 
         final MultiValueMap<String, String> queryValueMap = new LinkedMultiValueMap();
         queryValueMap.set("AWSAccessKeyId", config.getAwsAccessKeyId());
         queryValueMap.set("AssociateTag", config.getAssociateTag());
 
-        if (StringUtils.length(id) == 12) {
+        if (StringUtils.length(code) == 12) {
             queryValueMap.set("IdType", "UPC");
         } else {
             queryValueMap.set("IdType", "EAN");
         }
 
-        queryValueMap.set("ItemId", id);
+        queryValueMap.set("ItemId", code);
         queryValueMap.set("Operation", "ItemLookup");
         queryValueMap.set("ResponseGroup", "ItemAttributes,OfferSummary,Images");
         queryValueMap.set("SearchIndex", "All");

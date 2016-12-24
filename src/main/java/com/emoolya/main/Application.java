@@ -10,10 +10,12 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Controller;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.emoolya.routes", "com.emoolya.service", "com.emoolya.bean" },
-        excludeFilters = {@ComponentScan.Filter(value = Controller.class, type = FilterType.ANNOTATION)})
+@ComponentScan(basePackages = {"com.emoolya.routes", "com.emoolya.service",
+        "com.emoolya.bean", "com.emoolya.predicate"},
+        excludeFilters = {@ComponentScan.Filter(value = Controller.class,
+                type = FilterType.ANNOTATION)})
 
-public class Application  {
+public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

@@ -57,13 +57,13 @@ public class FlipkartService {
     /**
      * Requests Flipkart for the Product information by using Product bar code.
      *
-     * @param id - barcode that can be UPC(12 digit)  or EAN(13 digit)
+     * @param code - barcode that can be UPC(12 digit)  or EAN(13 digit)
      */
-    public String getProductInfo(final @Header("id") String id) {
+    public String getProductInfo(final @Header("code") String code) {
 
         final String url = config.getUrl();
         final UriComponentsBuilder uri = UriComponentsBuilder.
-                fromHttpUrl(url).queryParam("id", id);
+                fromHttpUrl(url).queryParam("id", code);
 
         log.info("send request to flipkart - ", uri.toUriString());
         final HttpHeaders headers = new HttpHeaders();

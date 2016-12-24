@@ -27,7 +27,7 @@ public class ProductTransformerBean {
     final Gson gson = new Gson();
 
     public Response transform(final @Body String json,
-                              final @Header("id") String id) {
+                              final @Header("code") String code) {
 
         final String body = "[" + json+ "]";
         final Type collectionType = new TypeToken<Collection<Product>>() {
@@ -37,7 +37,7 @@ public class ProductTransformerBean {
         final Response response = new Response();
 
         final ProductLookupResponse productLookupResponse = new ProductLookupResponse();
-        productLookupResponse.setBarcode(id);
+        productLookupResponse.setBarcode(code);
         productLookupResponse.setNoOfResults(products.size());
         productLookupResponse.setProducts(products);
 
