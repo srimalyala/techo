@@ -4,7 +4,7 @@ Reads data.txt from resources directory and sorts by satisfaction key using Tree
 Calculates satisfaction time with the time given 
 
 Execution 
-./gradlew bootRUn
+./gradlew bootRun
 The output - Max satisfaction - 1896303 in 10000 minutes time
 
 
