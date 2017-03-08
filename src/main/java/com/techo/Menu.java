@@ -68,48 +68,56 @@ public class Menu {
     }
 
     /**
-     * Sorts descending by satisfaction level and returns max satisfaction.
+     * Returns the max satisfaction
      */
     public int getMaxSatisfaction(final Map<Integer, Integer> map,
                                   final int timeInMins) {
 
-        int maxSatisfaction = 0;
+        int[] satisfactions = new int[100];
+        int[] times = new int[100];
+        int index = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
 
-        final Map<Integer, Integer> treeMap = new TreeMap<>(
-                (o1, o2) -> {
-                    if (o1 < o2) {
-                        return 1;
-                    } else if (o1 > o2) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
+            satisfactions[index] = entry.getKey();
+            times[index] = entry.getValue();
+            index++;
 
-        treeMap.putAll(map);
-
-        int leftTimeInMins = timeInMins;
-
-        for (Map.Entry<Integer, Integer> entry : treeMap.entrySet()) {
-
-            if (entry.getValue() == leftTimeInMins) {
-                maxSatisfaction = maxSatisfaction + entry.getKey();
-                break;
-            }
-
-            if (entry.getValue() < leftTimeInMins) {
-                maxSatisfaction = maxSatisfaction + entry.getKey();
-            } else {
-                maxSatisfaction += (leftTimeInMins * entry.getKey()) / entry.getValue();
-                break;
-            }
-
-            leftTimeInMins = leftTimeInMins - entry.getValue();
         }
 
+        return getMaxSatisfaction(satisfactions, times, timeInMins);
 
-        return maxSatisfaction;
+    }
 
+
+    /**
+     * Uses knapsack algorithm
+     * @param satisfactions
+     * @param times
+     * @param timeInMins
+     * @return
+     */
+    public static int getMaxSatisfaction(int satisfactions[], int times[], int timeInMins) {
+        int N = times.length;
+        int[][] V = new int[N + 1][timeInMins + 1];
+
+        for (int col = 0; col <= timeInMins; col++) {
+            V[0][col] = 0;
+        }
+
+        for (int row = 0; row <= N; row++) {
+            V[row][0] = 0;
+        }
+        for (int item = 1; item <= N; item++) {
+            for (int weight = 1; weight <= timeInMins; weight++) {
+                if (times[item - 1] <= weight) {
+                    V[item][weight] = Math.max(satisfactions[item - 1] + V[item - 1][weight - times[item - 1]], V[item - 1][weight]);
+                } else {
+                    V[item][weight] = V[item - 1][weight];
+                }
+            }
+        }
+
+        return V[N][timeInMins];
     }
 
 }
